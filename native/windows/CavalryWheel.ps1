@@ -17,7 +17,7 @@ $ErrorActionPreference = 'Stop'
 try {
     $winFormsReferences = @('System.Windows.Forms', 'System.Drawing', 'System.Web.Extensions')
     if ($PSVersionTable.PSEdition -eq 'Core') {
-        $winFormsReferences += @('System.Core', 'System.Linq', 'System.ComponentModel.Primitives', 'System.Drawing.Primitives', 'System.Windows.Forms.Primitives', 'System.Drawing.Common', 'mscorlib', 'System.Runtime', 'netstandard', 'System.Media', 'System.Threading', 'System.Threading.Thread', 'System.Collections', 'System.Collections.Specialized')
+        $winFormsReferences += @('System.Core', 'System.Linq', 'System.ComponentModel.Primitives', 'System.Drawing.Primitives', 'System.Windows.Forms.Primitives', 'System.Drawing.Common', 'mscorlib', 'System.Runtime', 'netstandard', 'System.Threading', 'System.Threading.Thread', 'System.Collections', 'System.Collections.Specialized')
     }
     Add-Type -AssemblyName $winFormsReferences
     Add-Type -ReferencedAssemblies $winFormsReferences -TypeDefinition @'
@@ -78,7 +78,7 @@ public class CavalryWheelForm : Form {
     void Finish(string response){if(complete)return;complete=true;Response=response;Close();}
     void Pick(int index){if(selected==index)return;selected=index;AccessibleDescription=selected>=0?Items[selected].name:request.profiles[active].name;Invalidate();}
     void Step(int delta){if(Items.Length==0)return;Pick(selected<0?(delta>0?0:Items.Length-1):(selected+delta+Items.Length)%Items.Length);}
-    void RunSelection(){if(selected<0 || !Items[selected].available){System.Media.SystemSounds.Beep.Play();return;}Finish("{\"version\":1,\"action\":\"run\",\"profile\":"+active+",\"slot\":"+Items[selected].slot+"}");}
+    void RunSelection(){if(selected<0 || !Items[selected].available){System.Console.Beep();return;}Finish("{\"version\":1,\"action\":\"run\",\"profile\":"+active+",\"slot\":"+Items[selected].slot+"}");}
     int Hit(Point point){float dx=point.X-cx,dy=point.Y-cy;var r=Math.Sqrt(dx*dx+dy*dy);if(r<inner||r>outer+7||Items.Length==0)return -1;var angle=(Math.Atan2(dy,dx)+Math.PI/2+Math.PI*2)%(Math.PI*2);return Math.Min(Items.Length-1,(int)(angle/(Math.PI*2/Items.Length)));}
     struct ArcTextLayout { public float middle,angleStep,metaRadius,maxNameWidth,metaSize,nameSize; public float[] nameRadii; }
     ArcTextLayout ArcLayout(int index,int count) {

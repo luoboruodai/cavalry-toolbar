@@ -3,7 +3,7 @@ $root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
 $helper = Join-Path $root 'native/windows/CavalryWheel.ps1'
 $winFormsReferences = @('System.Windows.Forms', 'System.Drawing', 'System.Web.Extensions')
 if ($PSVersionTable.PSEdition -eq 'Core') {
-    $winFormsReferences += @('System.Core', 'System.Linq', 'System.ComponentModel.Primitives', 'System.Drawing.Primitives', 'System.Windows.Forms.Primitives', 'System.Drawing.Common', 'mscorlib', 'System.Runtime', 'netstandard', 'System.Media', 'System.Threading', 'System.Threading.Thread', 'System.Collections', 'System.Collections.Specialized')
+    $winFormsReferences += @('System.Core', 'System.Linq', 'System.ComponentModel.Primitives', 'System.Drawing.Primitives', 'System.Windows.Forms.Primitives', 'System.Drawing.Common', 'mscorlib', 'System.Runtime', 'netstandard', 'System.Threading', 'System.Threading.Thread', 'System.Collections', 'System.Collections.Specialized')
 }
 $temp = Join-Path ([IO.Path]::GetTempPath()) ('CavalryWheelTests-' + [Guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $temp | Out-Null
