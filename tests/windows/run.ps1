@@ -48,7 +48,7 @@ function Set-Field($Form, $Name, $Value) {
 }
 function Invoke-Private($Form, $Name, $Arguments = @()) {
     $method = $Form.GetType().GetMethod($Name, [Reflection.BindingFlags]'NonPublic,Instance')
-    return $method.Invoke($Form, $Arguments)
+    return $method.Invoke($Form, [object[]]$Arguments)
 }
 function Invoke-Wheel([uint32[]]$Keys) {
     $form = New-WheelForm
