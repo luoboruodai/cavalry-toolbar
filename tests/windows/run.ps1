@@ -36,7 +36,9 @@ function Invoke-Wheel([uint32[]]$Keys) {
     $sourceText = [IO.File]::ReadAllText($helper, [Text.Encoding]::UTF8)
     $match = [regex]::Match($sourceText, "-TypeDefinition @'\r?\n(?<code>[\s\S]*?)\r?\n'@")
     Check ($match.Success) 'production WinForms source is extracted without duplication'
-    Add-Type -ReferencedAssemblies System.Windows.Forms,System.Drawing,System.Web.Extensions -TypeDefinition $match.Groups['code'].Value
+    if (-not ('CavalryWheelForm' -as [type])) {
+        Add-Type -ReferencedAssemblies System.Windows.Forms,System.Drawing,System.Web.Extensions -TypeDefinition $match.Groups['code'].Value
+    }
     $json = [IO.File]::ReadAllText($request, [Text.Encoding]::UTF8)
     $form = New-Object CavalryWheelForm($json)
     try {
