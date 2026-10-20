@@ -55,7 +55,7 @@ Requirements for development: Node.js, Python 3, and Apple Command Line Tools on
 ```sh
 node scripts-build.mjs
 native/macos/build.sh
-node --test tests
+node --test tests/host-smoke.test.mjs tests/toolbar.test.mjs tests/ui-relay.test.mjs tests/wheel.test.mjs
 tests/macos/run.sh
 python3 packaging/build_release.py
 ```

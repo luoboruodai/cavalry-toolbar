@@ -26,7 +26,7 @@ jobs:
           node --check src/CavalryToolbar.js
           node --check src/CavalryQuickbarPanel.js
       - name: Run source tests
-        run: node --test tests
+        run: node --test tests/host-smoke.test.mjs tests/toolbar.test.mjs tests/ui-relay.test.mjs tests/wheel.test.mjs
 
   macos-native:
     runs-on: macos-latest
