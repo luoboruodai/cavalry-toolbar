@@ -133,6 +133,7 @@ public class CavalryWheelForm : Form {
         }
         if(ht>=1 && pt>=1)SnapInteraction();else Invalidate();
     }
+    int Hit(Point point){float dx=point.X-cx,dy=point.Y-cy;var r=Math.Sqrt(dx*dx+dy*dy);if(r<inner||r>outer+7||Items.Length==0)return -1;var angle=(Math.Atan2(dy,dx)+Math.PI/2+Math.PI*2)%(Math.PI*2);return Math.Min(Items.Length-1,(int)(angle/(Math.PI*2/Items.Length)));}
     void Step(int delta){if(Items.Length==0)return;pressed=-1;Pick(selected<0?(delta>0?0:Items.Length-1):(selected+delta+Items.Length)%Items.Length,false);}
     void RunSelection(bool animated=false){if(selected<0 || !Items[selected].available){System.Media.SystemSounds.Beep.Play();return;}Finish("{\"version\":1,\"action\":\"run\",\"profile\":"+active+",\"slot\":"+Items[selected].slot+"}",animated);}
     void WriteResponse(){
