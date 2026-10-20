@@ -42,7 +42,9 @@ function Field($Form, $Name) {
     return $Form.GetType().GetField($Name, [Reflection.BindingFlags]'NonPublic,Instance').GetValue($Form)
 }
 function Set-Field($Form, $Name, $Value) {
-    $Form.GetType().GetField($Name, [Reflection.BindingFlags]'NonPublic,Instance').SetValue($Form, $Value)
+    $field = $Form.GetType().GetField($Name, [Reflection.BindingFlags]'NonPublic,Instance')
+    if ($field.FieldType -eq [int]) { $Value = [int]$Value }
+    $field.SetValue($Form, $Value)
 }
 function Invoke-Private($Form, $Name, $Arguments = @()) {
     $method = $Form.GetType().GetMethod($Name, [Reflection.BindingFlags]'NonPublic,Instance')
