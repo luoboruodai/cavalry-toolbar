@@ -15,6 +15,8 @@ using System.Runtime.InteropServices;
 public static class WheelNativeInput {
     [DllImport("user32.dll", CharSet=CharSet.Auto)]
     public static extern IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+    [DllImport("user32.dll", CharSet=CharSet.Auto)]
+    public static extern IntPtr FindWindow(string className, string windowName);
 }
 '@
 $requestObject = @{
@@ -39,7 +41,7 @@ function Invoke-Wheel([uint32[]]$Keys) {
     try {
         Start-Sleep -Milliseconds 900
         $process.Refresh()
-        $handle = $process.MainWindowHandle
+        $handle = [WheelNativeInput]::FindWindow($null, 'Cavalry Wheel')
         Check ($handle -ne [IntPtr]::Zero) "wheel exposes a native window handle"
         foreach ($key in $Keys) {
             [WheelNativeInput]::SendMessage($handle, 0x100, [IntPtr]$key, [IntPtr]::Zero) | Out-Null
