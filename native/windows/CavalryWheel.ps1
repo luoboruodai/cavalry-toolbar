@@ -19,6 +19,7 @@ try {
     if ($PSVersionTable.PSEdition -eq 'Core') {
         $winFormsReferences += @('System.Core', 'System.Linq', 'System.ComponentModel.Primitives', 'System.Drawing.Primitives', 'System.Windows.Forms.Primitives', 'System.Drawing.Common', 'mscorlib', 'System.Runtime', 'netstandard', 'System.Threading', 'System.Threading.Thread', 'System.Collections', 'System.Collections.Specialized', 'System.Console')
     }
+    if ([System.Environment]::Version.Major -ge 10) { $winFormsReferences += 'System.Private.Windows.Core' }
     Add-Type -AssemblyName $winFormsReferences
     Add-Type -ReferencedAssemblies $winFormsReferences -TypeDefinition @'
 using System;

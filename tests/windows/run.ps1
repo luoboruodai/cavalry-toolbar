@@ -40,6 +40,7 @@ function Invoke-Wheel([uint32[]]$Keys) {
     $sourceText = [IO.File]::ReadAllText($helper, [Text.Encoding]::UTF8)
     $match = [regex]::Match($sourceText, "-TypeDefinition @'\r?\n(?<code>[\s\S]*?)\r?\n'@")
     Check ($match.Success) 'production WinForms source is extracted without duplication'
+    if ([System.Environment]::Version.Major -ge 10) { $winFormsReferences += 'System.Private.Windows.Core' }
     if (-not ('CavalryWheelForm' -as [type])) {
         Add-Type -ReferencedAssemblies $winFormsReferences -TypeDefinition $match.Groups['code'].Value
     }
