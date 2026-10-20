@@ -99,7 +99,7 @@ try {
 
     $motion = New-WheelForm $false
     try {
-        Invoke-Private $motion 'Pick' @(0)
+        Invoke-Private $motion 'Pick' @(0, $true)
         Check ((Field $motion 'motionTimer').Enabled) 'hover starts the shared motion timer'
         Set-Field $motion 'hoverStart' ([DateTime]::UtcNow.AddSeconds(-1))
         Invoke-Private $motion 'AdvanceMotion'
@@ -118,7 +118,7 @@ try {
     } finally { $motion.Dispose() }
     $static = New-WheelForm $true
     try {
-        Invoke-Private $static 'Pick' @(0)
+        Invoke-Private $static 'Pick' @(0, $true)
         Check (-not (Field $static 'motionTimer').Enabled) 'reduced motion does not start hover animation'
         Invoke-Private $static 'RunSelection' @($true)
         Check (-not (Field $static 'closeTimer').Enabled) 'reduced motion closes without a close timer'
