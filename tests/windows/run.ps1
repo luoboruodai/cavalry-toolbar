@@ -47,12 +47,10 @@ function Invoke-Wheel([uint32[]]$Keys) {
         Check ($handle -ne [IntPtr]::Zero) 'production form creates a real native window handle'
         $form.GetType().GetField('selected', [Reflection.BindingFlags]'NonPublic,Instance').SetValue($form, -1)
         $selectedField = $form.GetType().GetField('selected', [Reflection.BindingFlags]'NonPublic,Instance')
-        Write-Host "KEYS=$($Keys -join ',') SELECTED_BEFORE=$($selectedField.GetValue($form))"
         $onKeyDown = $form.GetType().GetMethod('OnKeyDown', [Reflection.BindingFlags]'NonPublic,Instance')
         foreach ($key in $Keys) {
             $eventArgs = New-Object System.Windows.Forms.KeyEventArgs(([System.Windows.Forms.Keys]$key))
             $onKeyDown.Invoke($form, [object[]]@($eventArgs.PSObject.BaseObject)) | Out-Null
-            Write-Host "AFTER_KEY=$key SELECTED=$($selectedField.GetValue($form))"
         }
         Write-Host "WHEEL_RESPONSE=$($form.Response)"
         return $form.Response | ConvertFrom-Json
@@ -76,9 +74,9 @@ try {
     $pending = Invoke-WaitReader (Join-Path $temp 'missing.json') 1
     Check ($pending -match '"pending"\s*:\s*true') 'wait reader is bounded and reports pending'
 
-    $run = Invoke-Wheel @(0x26, 0x26, 0x0D)
+    $run = Invoke-Wheel @(0x28, 0x28, 0x0D)
     Check ($run.action -eq 'run' -and $run.profile -eq 0 -and $run.slot -eq 6) 'two Down key events then Enter select the second stable slot'
-    $switched = Invoke-Wheel @(0xC0, 0x26, 0x0D)
+    $switched = Invoke-Wheel @(0xC0, 0x28, 0x0D)
     Check ($switched.action -eq 'run' -and $switched.profile -eq 1 -and $switched.slot -eq 10) 'grave accent switches profile before selection'
     $cancel = Invoke-Wheel @(0x1B)
     Check ($cancel.action -eq 'cancel') 'Escape cancels without running a slot'
