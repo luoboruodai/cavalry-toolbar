@@ -221,7 +221,7 @@ public static class CavalryUIDispatcher {
                 var deadline=DateTime.UtcNow.AddSeconds(12);
                 while(!File.Exists(receipt) && DateTime.UtcNow<deadline)Thread.Sleep(50);
                 if(!File.Exists(receipt))return new UIDispatchResult("completion-unknown","菜单已调用，但未收到 UI 求值回执；未重试脚本。",request.target);
-                var result=new JavaScriptSerializer().Deserialize<dynamic>(File.ReadAllText(receipt));
+                var result=new JavaScriptSerializer().Deserialize<System.Collections.Generic.Dictionary<string,object>>(File.ReadAllText(receipt));
                 if(result["status"]!="evaluated")return new UIDispatchResult("script-error","UI 脚本报告错误，可能已经部分运行。",request.target);
                 return new UIDispatchResult("evaluated","外部 UI 源码已在 Cavalry UI 引擎求值；请检查实际面板结果。",request.target);
             }
