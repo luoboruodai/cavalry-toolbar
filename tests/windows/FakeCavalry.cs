@@ -10,6 +10,12 @@ public static class FakeCavalry {
         var scripts = new ToolStripMenuItem("Scripts");
         scripts.DropDownItems.Add(new ToolStripMenuItem("CavalryToolbar"));
         scripts.DropDownItems.Add(new ToolStripMenuItem("Panel"));
+        scripts.DropDownOpening += (sender, args) => {
+            foreach (string file in Directory.GetFiles(Directory.GetCurrentDirectory(), "CavalryToolbar_UIDispatch_*.js")) {
+                string name = Path.GetFileNameWithoutExtension(file);
+                if (!scripts.DropDownItems.ContainsKey(name)) scripts.DropDownItems.Add(new ToolStripMenuItem(name) { Name = name });
+            }
+        };
         scripts.DropDown.ItemClicked += (sender, args) => {
             string name = args.ClickedItem.Text;
             File.WriteAllText(Path.Combine(Path.GetTempPath(), "CavalryWheel-qa-receipt.json"), name);
