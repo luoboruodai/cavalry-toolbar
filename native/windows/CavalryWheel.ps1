@@ -15,8 +15,12 @@ if ($WaitResponsePath) {
 $ErrorActionPreference = 'Stop'
 [Console]::OutputEncoding = New-Object System.Text.UTF8Encoding($false)
 try {
-    Add-Type -AssemblyName System.Windows.Forms,System.Drawing,System.Web.Extensions,System.Core,System.Linq
-    Add-Type -ReferencedAssemblies System.Windows.Forms,System.Drawing,System.Web.Extensions,System.Core,System.Linq,System.ComponentModel.Primitives,System.Drawing.Primitives,System.Windows.Forms.Primitives -TypeDefinition @'
+    $winFormsReferences = @('System.Windows.Forms', 'System.Drawing', 'System.Web.Extensions')
+    if ($PSVersionTable.PSEdition -eq 'Core') {
+        $winFormsReferences += @('System.Core', 'System.Linq', 'System.ComponentModel.Primitives', 'System.Drawing.Primitives', 'System.Windows.Forms.Primitives', 'System.Drawing.Common')
+    }
+    Add-Type -AssemblyName $winFormsReferences
+    Add-Type -ReferencedAssemblies $winFormsReferences -TypeDefinition @'
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
