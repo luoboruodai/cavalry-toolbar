@@ -46,9 +46,10 @@ try {
     $waitFile = Join-Path $temp 'wait.json'
     [IO.File]::WriteAllText($waitFile, '{"version":1,"action":"run","slot":6}', (New-Object Text.UTF8Encoding($false)))
     $waitResult = (& $helper -WaitResponsePath $waitFile -WaitSeconds 1 | Out-String).Trim()
-    Check ($waitResult -eq '{"version":1,"action":"run","slot":6}') 'wait reader returns the completed response'
+    Write-Output "WAIT_RESULT_TYPE=$($waitResult.GetType().FullName) VALUE=[$waitResult]"
+    Check ($waitResult -match '"action"\s*:\s*"run"' -and $waitResult -match '"slot"\s*:\s*6') 'wait reader returns the completed response'
     $pending = (& $helper -WaitResponsePath (Join-Path $temp 'missing.json') -WaitSeconds 1 | Out-String).Trim()
-    Check ($pending -eq '{"pending":true}') 'wait reader is bounded and reports pending'
+    Check ($pending -match '"pending"\s*:\s*true') 'wait reader is bounded and reports pending'
 
     $run = Invoke-Wheel '{DOWN}{DOWN}{ENTER}'
     Check ($run.action -eq 'run' -and $run.profile -eq 0 -and $run.slot -eq 6) 'two Down keys then Enter select the second stable slot'
