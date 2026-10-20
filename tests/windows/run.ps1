@@ -46,11 +46,13 @@ function Invoke-Wheel([uint32[]]$Keys) {
         $handle = $form.Handle
         Check ($handle -ne [IntPtr]::Zero) 'production form creates a real native window handle'
         $form.GetType().GetField('selected', [Reflection.BindingFlags]'NonPublic,Instance').SetValue($form, -1)
-        Write-Host "KEYS=$($Keys -join ',')"
+        $selectedField = $form.GetType().GetField('selected', [Reflection.BindingFlags]'NonPublic,Instance')
+        Write-Host "KEYS=$($Keys -join ',') SELECTED_BEFORE=$($selectedField.GetValue($form))"
         $onKeyDown = $form.GetType().GetMethod('OnKeyDown', [Reflection.BindingFlags]'NonPublic,Instance')
         foreach ($key in $Keys) {
             $eventArgs = New-Object System.Windows.Forms.KeyEventArgs(([System.Windows.Forms.Keys]$key))
             $onKeyDown.Invoke($form, [object[]]@($eventArgs.PSObject.BaseObject)) | Out-Null
+            Write-Host "AFTER_KEY=$key SELECTED=$($selectedField.GetValue($form))"
         }
         Write-Host "WHEEL_RESPONSE=$($form.Response)"
         return $form.Response | ConvertFrom-Json
