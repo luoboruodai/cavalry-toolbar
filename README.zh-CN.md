@@ -2,7 +2,7 @@
 
 面向 **Cavalry 2.8** 的原生脚本轮盘与配置编辑器。用固定快捷键管理 12 个稳定脚本槽位，提供同心圆弧名称、Filee 式逐片退场和减少动效回退。
 
-[English README](README.md) · [下载 v0.1.0](https://github.com/luoboruodai/cavalry-toolbar/releases/tag/v0.1.0) · [安装指南](docs/INSTALL.zh-CN.md) · [CI](https://github.com/luoboruodai/cavalry-toolbar/actions/workflows/ci-release.yml)
+[English README](README.md) · [下载 v0.2.0](https://github.com/luoboruodai/cavalry-toolbar/releases/tag/v0.2.0) · [安装指南](docs/INSTALL.zh-CN.md) · [CI](https://github.com/luoboruodai/cavalry-toolbar/actions/workflows/ci-release.yml)
 
 ## 功能
 
@@ -16,8 +16,8 @@
 
 | 安装包 | 平台 | 内容 |
 | --- | --- | --- |
-| `CavalryToolbar-v0.1.0-macOS-universal.zip` | macOS 12+，Apple Silicon 与 Intel | 两个编辑器脚本、通用 AppKit 助手、验收夹具、双语离线指南 |
-| `CavalryToolbar-v0.1.0-Windows-x64.zip` | Windows 10/11 x64 | 两个编辑器脚本、PowerShell/WinForms 助手、验收夹具、双语离线指南 |
+| `CavalryToolbar-v0.2.0-macOS-universal.zip` | macOS 12+，Apple Silicon 与 Intel | 两个编辑器脚本、通用 AppKit 助手、验收夹具、双语离线指南 |
+| `CavalryToolbar-v0.2.0-Windows-x64.zip` | Windows 10/11 x64 | 两个编辑器脚本、PowerShell/WinForms 助手、验收夹具、双语离线指南 |
 | `SHA256SUMS.txt` | 全部 | 两个安装包的 SHA-256 校验值 |
 
 **安装请使用上述附件，不要把 GitHub 自动生成的 “Source code” ZIP 当作安装包。**
@@ -36,8 +36,8 @@
 - 使用 **Windows PowerShell 5.1（powershell.exe）** 与 .NET Framework WinForms，不设置 `ExecutionPolicy Bypass`，不修改系统策略；PowerShell 7（pwsh）不是本次验收运行时。
 - 真实 Windows CI 覆盖原生表单与句柄创建、按键事件、配置切换、取消与有限等待。
 - 尚未覆盖**已登录 Cavalry 宿主内的 Windows 端到端验收**。请先使用包内场景中立夹具验证，再运行生产脚本。
-- Windows 尚未实现普通快捷键的 UI 面板分派；请从配置编辑器打开 UI 面板。
-- Windows 原生轮盘目前使用静态反馈，Filee 式逐片退场仅适用于 macOS。
+- Windows 普通快捷键的 UI 面板分派已改用绑定实际 Cavalry PID 的 UI Automation；外部 `.jsc` 仍需安装到 Cavalry Scripts。
+- Windows 原生轮盘已补齐悬停／按下反馈与 Filee 式逐片退场，并支持减少动效。
 
 ## 安装与使用
 

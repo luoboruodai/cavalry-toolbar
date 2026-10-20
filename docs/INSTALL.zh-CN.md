@@ -1,23 +1,23 @@
-# Cavalry Toolbar v0.1.0 安装指南
+# Cavalry Toolbar v0.2.0 安装指南
 
-[English installation](INSTALL.md) · [项目说明](https://github.com/luoboruodai/cavalry-toolbar/blob/v0.1.0/README.zh-CN.md)
+[English installation](INSTALL.md) · [项目说明](https://github.com/luoboruodai/cavalry-toolbar/blob/v0.2.0/README.zh-CN.md)
 
 本指南同时收录在两个安装包中，可离线阅读，涵盖安装、首次验收、平台权限与恢复。理解这些步骤不需要图片或其他在线资源。
 
 ## 1. 校验下载包
 
-下载 `CavalryToolbar-v0.1.0-macOS-universal.zip` 或 `CavalryToolbar-v0.1.0-Windows-x64.zip`，以及 `SHA256SUMS.txt`。
+下载 `CavalryToolbar-v0.2.0-macOS-universal.zip` 或 `CavalryToolbar-v0.2.0-Windows-x64.zip`，以及 `SHA256SUMS.txt`。
 
 macOS：
 
 ```sh
-shasum -a 256 CavalryToolbar-v0.1.0-macOS-universal.zip
+shasum -a 256 CavalryToolbar-v0.2.0-macOS-universal.zip
 ```
 
 Windows PowerShell：
 
 ```powershell
-Get-FileHash .\CavalryToolbar-v0.1.0-Windows-x64.zip -Algorithm SHA256
+Get-FileHash .\CavalryToolbar-v0.2.0-Windows-x64.zip -Algorithm SHA256
 ```
 
 与 `SHA256SUMS.txt` 中对应行比较。校验值不一致时不要安装。
@@ -72,7 +72,7 @@ Get-FileHash .\CavalryToolbar-v0.1.0-Windows-x64.zip -Algorithm SHA256
 
 - 助手使用 **Windows PowerShell 5.1（powershell.exe）** 与 WinForms；PowerShell 7（pwsh）不是本次验收运行时，不设置 `ExecutionPolicy Bypass`，不修改策略。如果策略阻止运行，请先与管理员核对限制。
 - 真实 Windows CI 覆盖原生助手，但不等于已登录 Cavalry 宿主内的端到端验收。请在自己的机器上先运行包内夹具。
-- Windows 尚未实现普通快捷键的 UI 面板分派，请从配置编辑器打开 UI 面板。
+- Windows 普通快捷键的 UI 面板分派已改用绑定实际 Cavalry PID 的 UI Automation；外部 `.jsc` 仍需安装到 Cavalry Scripts。
 
 ## 升级或移除
 

@@ -1,23 +1,23 @@
-# Install Cavalry Toolbar v0.1.0
+# Install Cavalry Toolbar v0.2.0
 
-[中文安装指南](INSTALL.zh-CN.md) · [Project README](https://github.com/luoboruodai/cavalry-toolbar/blob/v0.1.0/README.md)
+[中文安装指南](INSTALL.zh-CN.md) · [Project README](https://github.com/luoboruodai/cavalry-toolbar/blob/v0.2.0/README.md)
 
 This guide is also included offline in both installation archives. It covers installation, first-run validation, platform permissions, and recovery. It does not require images or any other online resource.
 
 ## 1. Verify your download
 
-Download either `CavalryToolbar-v0.1.0-macOS-universal.zip` or `CavalryToolbar-v0.1.0-Windows-x64.zip`, plus `SHA256SUMS.txt`.
+Download either `CavalryToolbar-v0.2.0-macOS-universal.zip` or `CavalryToolbar-v0.2.0-Windows-x64.zip`, plus `SHA256SUMS.txt`.
 
 macOS:
 
 ```sh
-shasum -a 256 CavalryToolbar-v0.1.0-macOS-universal.zip
+shasum -a 256 CavalryToolbar-v0.2.0-macOS-universal.zip
 ```
 
 Windows PowerShell:
 
 ```powershell
-Get-FileHash .\CavalryToolbar-v0.1.0-Windows-x64.zip -Algorithm SHA256
+Get-FileHash .\CavalryToolbar-v0.2.0-Windows-x64.zip -Algorithm SHA256
 ```
 
 Compare the value with the corresponding line in `SHA256SUMS.txt`. Do not install an archive that does not match.
@@ -72,7 +72,7 @@ Save your project before running any script that may modify it.
 
 - The helper uses **Windows PowerShell 5.1 (`powershell.exe`)** and WinForms; PowerShell 7 (`pwsh`) is not the validated runtime. The package does not set `ExecutionPolicy Bypass` or change policy. If policy blocks the helper, review the restriction with your administrator before running it.
 - Real Windows CI covers the native helper, not an end-to-end logged-in Cavalry installation. Validate with the included fixtures on your machine.
-- Plain-shortcut UI-panel dispatch is not implemented on Windows. Open UI panels from the configuration editor instead.
+- Plain-shortcut UI-panel dispatch uses UI Automation bound to the actual calling Cavalry PID. External `.jsc` still needs to be installed in Cavalry Scripts.
 
 ## Upgrade or remove
 

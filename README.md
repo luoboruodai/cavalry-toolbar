@@ -2,7 +2,7 @@
 
 A native radial script launcher and profile editor for **Cavalry 2.8**. Keep twelve stable script slots one shortcut away, with circular arc labels, a Filee-inspired close animation, and a reduced-motion fallback.
 
-[中文说明](README.zh-CN.md) · [Download v0.1.0](https://github.com/luoboruodai/cavalry-toolbar/releases/tag/v0.1.0) · [Installation](docs/INSTALL.md) · [CI](https://github.com/luoboruodai/cavalry-toolbar/actions/workflows/ci-release.yml)
+[中文说明](README.zh-CN.md) · [Download v0.2.0](https://github.com/luoboruodai/cavalry-toolbar/releases/tag/v0.2.0) · [Installation](docs/INSTALL.md) · [CI](https://github.com/luoboruodai/cavalry-toolbar/actions/workflows/ci-release.yml)
 
 ## What it does
 
@@ -16,8 +16,8 @@ A native radial script launcher and profile editor for **Cavalry 2.8**. Keep twe
 
 | Package | Platform | Contents |
 | --- | --- | --- |
-| `CavalryToolbar-v0.1.0-macOS-universal.zip` | macOS 12+, Apple Silicon and Intel | Both editor scripts, universal AppKit helper, validation fixtures, bilingual offline guides |
-| `CavalryToolbar-v0.1.0-Windows-x64.zip` | Windows 10/11 x64 | Both editor scripts, PowerShell/WinForms helper, validation fixtures, bilingual offline guides |
+| `CavalryToolbar-v0.2.0-macOS-universal.zip` | macOS 12+, Apple Silicon and Intel | Both editor scripts, universal AppKit helper, validation fixtures, bilingual offline guides |
+| `CavalryToolbar-v0.2.0-Windows-x64.zip` | Windows 10/11 x64 | Both editor scripts, PowerShell/WinForms helper, validation fixtures, bilingual offline guides |
 | `SHA256SUMS.txt` | All | SHA-256 for the two installation archives |
 
 **Use the installation archives, not GitHub's automatic “Source code” ZIP, for a ready-to-install package.**
@@ -36,8 +36,8 @@ A native radial script launcher and profile editor for **Cavalry 2.8**. Keep twe
 - Windows PowerShell 5.1 (`powershell.exe`) and .NET Framework WinForms; no `ExecutionPolicy Bypass` and no policy changes. PowerShell 7 (`pwsh`) is not the validated runtime.
 - Real Windows CI covers native form construction and handle creation, key event handling, profile switching, cancellation, and bounded response waiting.
 - An end-to-end test inside a logged-in Cavalry installation on Windows is **not yet covered**. Validate with the included scene-neutral fixtures before running production scripts.
-- Plain-shortcut UI-panel dispatch is not implemented on Windows. Open UI panels from the configuration editor instead.
-- The native Windows wheel currently uses static feedback; Filee-inspired per-slice close animation is macOS-only.
+- Plain-shortcut UI-panel dispatch now uses UI Automation bound to the actual calling Cavalry PID. External `.jsc` still needs to be installed in Cavalry Scripts.
+- The native Windows wheel includes hover/press feedback and Filee-inspired per-slice close animation, with reduced-motion fallback.
 
 ## Install and use
 
