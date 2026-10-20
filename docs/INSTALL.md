@@ -70,7 +70,7 @@ Save your project before running any script that may modify it.
 
 ## Windows execution and current limits
 
-- The helper uses local PowerShell and WinForms. The package does not set `ExecutionPolicy Bypass` or change policy. If policy blocks the helper, review the restriction with your administrator before running it.
+- The helper uses **Windows PowerShell 5.1 (`powershell.exe`)** and WinForms; PowerShell 7 (`pwsh`) is not the validated runtime. The package does not set `ExecutionPolicy Bypass` or change policy. If policy blocks the helper, review the restriction with your administrator before running it.
 - Real Windows CI covers the native helper, not an end-to-end logged-in Cavalry installation. Validate with the included fixtures on your machine.
 - Plain-shortcut UI-panel dispatch is not implemented on Windows. Open UI panels from the configuration editor instead.
 

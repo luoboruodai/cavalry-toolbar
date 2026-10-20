@@ -5,6 +5,6 @@ Cavalry Toolbar · Windows installation
 3. Keep CavalryToolbar.js, CavalryQuickbarPanel.js and CavalryToolbar_assets/ together.
 4. Open CavalryToolbar, bind scene-neutral validation/QuickbarSmoke.js, then assign a shortcut to CavalryQuickbarPanel.
 5. Mouse/wheel/arrows select; click/Enter runs; Esc cancels; ` and Shift+` switch profiles.
-6. The helper does not change ExecutionPolicy or use ExecutionPolicy Bypass. If policy blocks it, review the restriction before running.
+6. The helper requires Windows PowerShell 5.1 (powershell.exe); PowerShell 7 is not the validated runtime. It does not change ExecutionPolicy or use ExecutionPolicy Bypass. If policy blocks it, review the restriction before running.
 7. Plain-shortcut UI-panel dispatch is not implemented on Windows. Open UI panels from the configuration editor.
 8. Real Windows CI covers the native helper, not a complete logged-in Cavalry host test. Validate with the included scene-neutral fixtures before production use and save your Scene first.

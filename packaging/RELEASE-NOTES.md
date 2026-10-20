@@ -29,7 +29,7 @@ Release jobs require source tests, macOS AppKit event-model checks, real Windows
 ### Platform limits
 
 - The macOS helper is ad-hoc signed and not notarized. Accessibility permission is needed only for plain-shortcut UI-panel/configuration dispatch.
-- Windows native helper checks run on real Windows CI, but an end-to-end logged-in Cavalry host test on Windows is not covered. Plain-shortcut UI-panel dispatch is not implemented on Windows; use the configuration editor.
+- Windows native helper checks run on real Windows CI, but an end-to-end logged-in Cavalry host test on Windows is not covered. Plain-shortcut UI-panel dispatch is not implemented on Windows; use the configuration editor. The native Windows wheel uses static feedback; Filee-inspired per-slice close animation is macOS-only.
 - Validate with the included scene-neutral fixtures before running production scripts. Save your Scene first.
 
 ## 中文
@@ -59,5 +59,5 @@ Cavalry Toolbar 是面向 Cavalry 2.8 的原生脚本轮盘与配置编辑器。
 ### 平台限制
 
 - macOS 助手为 ad-hoc 开发签名，未公证。只有普通快捷键的 UI 面板／配置分派需要辅助功能权限。
-- Windows 原生助手在真实 Windows CI 中验证，但尚未覆盖已登录 Cavalry 宿主内的端到端测试。Windows 普通快捷键的 UI 面板分派尚未实现，请从配置编辑器打开。
+- Windows 原生助手在真实 Windows CI 中验证，但尚未覆盖已登录 Cavalry 宿主内的端到端测试。Windows 普通快捷键的 UI 面板分派尚未实现，请从配置编辑器打开。Windows 原生轮盘目前使用静态反馈，Filee 式逐片退场仅适用于 macOS。
 - 请先使用包内场景中立夹具验收，再运行生产脚本，并提前保存 Scene。

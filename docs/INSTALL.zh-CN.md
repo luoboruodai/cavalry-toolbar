@@ -70,7 +70,7 @@ Get-FileHash .\CavalryToolbar-v0.1.0-Windows-x64.zip -Algorithm SHA256
 
 ## Windows 执行与当前限制
 
-- 助手使用本地 PowerShell 与 WinForms，不设置 `ExecutionPolicy Bypass`，不修改策略。如果策略阻止运行，请先与管理员核对限制。
+- 助手使用 **Windows PowerShell 5.1（powershell.exe）** 与 WinForms；PowerShell 7（pwsh）不是本次验收运行时，不设置 `ExecutionPolicy Bypass`，不修改策略。如果策略阻止运行，请先与管理员核对限制。
 - 真实 Windows CI 覆盖原生助手，但不等于已登录 Cavalry 宿主内的端到端验收。请在自己的机器上先运行包内夹具。
 - Windows 尚未实现普通快捷键的 UI 面板分派，请从配置编辑器打开 UI 面板。
 
