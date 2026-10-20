@@ -45,6 +45,7 @@ function Invoke-Wheel([uint32[]]$Keys) {
     try {
         $form.Show()
         $form.Activate()
+        $form.GetType().GetField('selected', [Reflection.BindingFlags]'NonPublic,Instance').SetValue($form, -1)
         $handle = $form.Handle
         Check ($handle -ne [IntPtr]::Zero) 'production form creates a real native window handle'
         foreach ($key in $Keys) {
