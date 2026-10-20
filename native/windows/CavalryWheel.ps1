@@ -15,8 +15,8 @@ if ($WaitResponsePath) {
 $ErrorActionPreference = 'Stop'
 [Console]::OutputEncoding = New-Object System.Text.UTF8Encoding($false)
 try {
-    Add-Type -AssemblyName System.Windows.Forms,System.Drawing,System.Web.Extensions
-    Add-Type -ReferencedAssemblies System.Windows.Forms,System.Drawing,System.Web.Extensions -TypeDefinition @'
+    Add-Type -AssemblyName System.Windows.Forms,System.Drawing,System.Web.Extensions,System.Core,System.Linq
+    Add-Type -ReferencedAssemblies System.Windows.Forms,System.Drawing,System.Web.Extensions,System.Core,System.Linq -TypeDefinition @'
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
