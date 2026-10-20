@@ -328,6 +328,7 @@ struct ArcTextLayout { public float middle,angleStep,metaRadius,maxNameWidth,met
         LabelText(g,"打开配置",10,FontStyle.Regular,AccentText,new RectangleF(75,477,290,16));
     }
 }
+'@
     if ($DispatchUI) {
         try {
             $dispatchRequest = [IO.File]::ReadAllText($DispatchUI,[Text.Encoding]::UTF8) | ConvertFrom-Json
