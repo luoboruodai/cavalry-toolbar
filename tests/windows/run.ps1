@@ -51,7 +51,7 @@ function Invoke-Wheel([uint32[]]$Keys) {
             [WheelNativeInput]::SendMessage($handle, 0x100, [IntPtr]$key, [IntPtr]::Zero) | Out-Null
             [WheelNativeInput]::SendMessage($handle, 0x101, [IntPtr]$key, [IntPtr]::Zero) | Out-Null
         }
-        Write-Output "WHEEL_RESPONSE=$($form.Response)"
+        Write-Host "WHEEL_RESPONSE=$($form.Response)"
         return $form.Response | ConvertFrom-Json
     } finally {
         $form.Dispose()
