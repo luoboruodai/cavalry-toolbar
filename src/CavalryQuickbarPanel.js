@@ -133,24 +133,42 @@
             var editorUIContext = false;
             try { editorUIContext = typeof cavalryToolbarWheelUIContext !== "undefined" && cavalryToolbarWheelUIContext === true; } catch (ignored) { editorUIContext = false; }
             if (editorUIContext && typeof ui !== "undefined" && typeof ui.runFileScript === "function") ui.runFileScript(target);
-            else if (platform === "macOS") {
+            else if (platform === "macOS" || platform === "Windows") {
                 // Obtain the actual invoking process, never guess between running Cavalry versions.
-                var parent = api.runProcess("/usr/bin/env", ["-u", "DYLD_INSERT_LIBRARIES", "/bin/sh", "-c", "printf '%s' \"$PPID\""]);
+                var parent = platform === "macOS"
+                    ? api.runProcess("/usr/bin/env", ["-u", "DYLD_INSERT_LIBRARIES", "/bin/sh", "-c", "printf '%s' \"$PPID\""])
+                    : api.runProcess(command, ["-NoProfile", "-Command", "(Get-Process -Id $PID).Parent.Id"]);
                 var parentText = parent && !parent.error && typeof parent.output === "string" ? clean(parent.output) : "";
                 var hostPID = /^[1-9][0-9]*$/.test(parentText) ? Number(parentText) : 0;
                 if (!integer(hostPID) || hostPID < 1 || hostPID > 2147483647) {
                     log("无法确认发起调用的 Cavalry 进程；未选择其他实例代替，也未以普通模式执行 UI 脚本。"); return "ui-unavailable";
                 }
+                if (platform === "Windows" && !exists(assets + "/UIRelay.js")) {
+                    log("Windows UI 中继未安装，请复制随包的 CavalryToolbar_assets 文件夹。"); return "missing-helper";
+                }
                 var dispatchPath = requestPath.replace(/\.json$/, "-ui.json");
+                var dispatchResponsePath = requestPath.replace(/\.json$/, "-ui-response.json");
                 if (!api.writeToFile(dispatchPath, JSON.stringify({ version: 1, hostPID: hostPID, target: target }), true)) throw new Error("无法写入 UI 分派请求");
                 // No -W: Cavalry must leave this callback before the helper presses its Scripts menu.
                 // The one-shot helper consumes its request and removes only its owned temporary relay.
-                var launched = api.runProcess("/usr/bin/open", ["-n", "-a", helperApp, "--args", "--dispatch-ui", dispatchPath]);
+                var launched;
+                if (platform === "macOS") launched = api.runProcess("/usr/bin/open", ["-n", "-a", helperApp, "--args", "--dispatch-ui", dispatchPath]);
+                else launched = api.runProcess(command, ["-NoProfile", "-STA", "-File", helper, "-DispatchUI", dispatchPath, "-DispatchResponsePath", dispatchResponsePath]);
                 if (!launched || launched.error) {
-                    if (typeof api.deleteFilePath === "function") api.deleteFilePath(dispatchPath);
+                    if (typeof api.deleteFilePath === "function") { api.deleteFilePath(dispatchPath); api.deleteFilePath(dispatchResponsePath); }
                     throw new Error(launched && launched.error ? launched.error : "UI 分派助手未启动");
                 }
-                log("已请求当前 Cavalry 的原生菜单 UI 分派；请检查面板或系统辅助功能授权提示。这不是脚本成功证明。");
+                if (platform === "Windows") {
+                    var waited = api.runProcess(command, ["-NoProfile", "-File", helper, "-WaitResponsePath", dispatchResponsePath, "-WaitSeconds", "15"]);
+                    var dispatchResult = null;
+                    try { if (waited && typeof waited.output === "string" && waited.output) dispatchResult = JSON.parse(waited.output); } catch (ignored) { dispatchResult = null; }
+                    if (typeof api.deleteFilePath === "function") { api.deleteFilePath(dispatchPath); api.deleteFilePath(dispatchResponsePath); }
+                    if (!dispatchResult || dispatchResult.action !== "ui-dispatch") { log("UI 分派没有返回有效结果；未执行替代路径。"); return "error"; }
+                    if (["menu-invoked", "evaluated"].indexOf(dispatchResult.status) < 0) {
+                        log(dispatchResult.message || "UI 分派失败；未执行替代路径。"); return "error";
+                    }
+                }
+                log("已请求当前 Cavalry 的原生菜单 UI 分派；请检查面板结果。这不是脚本成功证明。");
                 return "ui-dispatch-pending";
             } else { log("此入口没有 UI 脚本上下文；请从配置编辑器的「呼出轮盘」运行 UI 面板。此平台快捷键的 UI 分派尚待接通。"); return "ui-unavailable"; }
         } else if (typeof api.load === "function") api.load(target);

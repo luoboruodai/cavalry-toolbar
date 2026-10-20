@@ -24,6 +24,7 @@ for source in sorted(app.rglob('*')):
         mac['Scripts/CavalryToolbar_assets/CavalryWheel.app/' + source.relative_to(app).as_posix()] = source
 windows = dict(common)
 windows['Scripts/CavalryToolbar_assets/CavalryWheel.ps1'] = root / 'dist' / 'CavalryToolbar_assets' / 'CavalryWheel.ps1'
+windows['Scripts/CavalryToolbar_assets/UIRelay.js'] = root / 'dist' / 'CavalryToolbar_assets' / 'UIRelay.js'
 archives = {
     f'CavalryToolbar-v{version}-macOS-universal.zip': mac,
     f'CavalryToolbar-v{version}-Windows-x64.zip': windows,

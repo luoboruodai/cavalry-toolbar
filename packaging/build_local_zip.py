@@ -14,6 +14,7 @@ entries = {
 assets = root / 'dist' / 'CavalryToolbar_assets'
 for relative in [
     'CavalryWheel.ps1',
+    'UIRelay.js',
     'CavalryWheel.app/Contents/Info.plist',
     'CavalryWheel.app/Contents/MacOS/CavalryWheel',
     'CavalryWheel.app/Contents/Resources/UIRelay.js',

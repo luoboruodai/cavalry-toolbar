@@ -8,14 +8,14 @@ function mount(options={}){
  const state=options.state===undefined?defaultState():options.state;
  const logs=[],loads=[],uiLoads=[],processes=[],writes=[],deletes=[],files=new Map();
  const base=options.root??'/scripts',platform=options.platform??'macOS';
- const fileSet=new Set(options.files??[base+'/Alpha.js',base+'/Panel.js',base+'/CavalryToolbar.js',base+'/CavalryToolbar_assets/CavalryWheel.app/Contents/MacOS/CavalryWheel',base+'/CavalryToolbar_assets/CavalryWheel.ps1']);
+ const fileSet=new Set(options.files??[base+'/Alpha.js',base+'/Panel.js',base+'/CavalryToolbar.js',base+'/CavalryToolbar_assets/CavalryWheel.app/Contents/MacOS/CavalryWheel',base+'/CavalryToolbar_assets/CavalryWheel.ps1',base+'/CavalryToolbar_assets/UIRelay.js']);
  const api={getPlatform:()=>platform,getHomeFolder:()=>'/Users/example',getTempFolder:()=>'/tmp',getPreferenceObject:()=>state,hasPreferenceObject:()=>state!=null,
   isFile:p=>fileSet.has(p),writeToFile(p,data){files.set(p,data);writes.push({path:p,data});return options.writeFailure?false:true;},
   readFromFile:p=>files.get(p),deleteFilePath(p){deletes.push(p);files.delete(p);},
   load:p=>{loads.push(p);if(options.loadError)throw new Error('expected String, typeof=boolean');},
   runProcess(command,args){
    processes.push({command,args});
-   if(args[args.length-1]===`printf '%s' "$PPID"`)return {output:options.parentOutput??'12345'};
+   if(args[args.length-1]===`printf '%s' "$PPID"` || args.includes('(Get-Process -Id $PID).Parent.Id'))return {output:options.parentOutput??'12345'};
    if(args.includes('--dispatch-ui'))return options.dispatchError?{error:'dispatch failed'}:{};
    const output=options.output??JSON.stringify({version:1,action:'run',profile:0,slot:0});
    if(args.includes('CavalryWheelWait') || args.includes('-WaitResponsePath')) return {output:options.waitOutput??JSON.stringify({version:1,action:'run',profile:0,slot:0})};
@@ -77,9 +77,14 @@ test('declined dispatch launch cleans its request without ordinary fallback',()=
  const app=mount({plain:true,root:'/Users/example/Library/Application Support/Cavalry/Scripts',dispatchError:true,output:JSON.stringify({version:1,action:'run',profile:0,slot:2})});
  assert.equal(app.result,'error');assert.deepEqual(app.loads,[]);assert.ok(app.deletes.some(p=>p.endsWith('-ui.json')));
 });
-test('Windows plain entry still reports missing UI context rather than pretending compatibility',()=>{
- const app=mount({plain:true,root:'/Users/example/AppData/Roaming/Cavalry/Scripts',platform:'Windows',output:JSON.stringify({version:1,action:'run',profile:0,slot:2})});
- assert.equal(app.result,'ui-unavailable');assert.deepEqual(app.loads,[]);assert.equal(app.processes.length,1);
+test('Windows plain entry dispatches UI with the actual caller PID and waits for the native result',()=>{
+ const app=mount({plain:true,root:'/Users/example/AppData/Roaming/Cavalry/Scripts',platform:'Windows',output:JSON.stringify({version:1,action:'run',profile:0,slot:2}),waitOutput:JSON.stringify({action:'ui-dispatch',status:'menu-invoked'})});
+ assert.equal(app.result,'ui-dispatch-pending');assert.deepEqual(app.loads,[]);assert.deepEqual(app.uiLoads,[]);
+ assert.equal(app.processes.length,4);
+ const request=JSON.parse(app.writes[1].data);assert.equal(request.hostPID,12345);
+ const args=Array.from(app.processes[2].args);assert.ok(args.includes('-DispatchUI'));assert.ok(args.includes('-DispatchResponsePath'));
+ assert.ok(Array.from(app.processes[3].args).includes('-WaitResponsePath'));
+ assert.ok(app.deletes.some(p=>p.endsWith('-ui.json')));assert.ok(app.deletes.some(p=>p.endsWith('-ui-response.json')));
 });
 test('configuration action uses the editor only from an available UI context',()=>{
  const app=mount({output:JSON.stringify({version:1,action:'settings'})});assert.deepEqual(app.uiLoads,['/scripts/CavalryToolbar.js']);
