@@ -4,6 +4,23 @@ A native radial script launcher and profile editor for **Cavalry 2.8**. Keep twe
 
 [中文说明](README.zh-CN.md) · [Download v0.2.0](https://github.com/luoboruodai/cavalry-toolbar/releases/tag/v0.2.0) · [Installation](docs/INSTALL.md) · [CI](https://github.com/luoboruodai/cavalry-toolbar/actions/workflows/ci-release.yml)
 
+**v0.2.0** · Cavalry 2.8 · macOS 12+ universal · Windows 10/11 x64
+
+<div align="center">
+
+<img src="docs/assets/cavalry-toolbar-banner.svg" alt="Cavalry Toolbar native radial script launcher" width="960">
+
+[![CI](https://github.com/luoboruodai/cavalry-toolbar/actions/workflows/ci-release.yml/badge.svg?branch=main)](https://github.com/luoboruodai/cavalry-toolbar/actions/workflows/ci-release.yml)
+[![Release](https://img.shields.io/github/v/release/luoboruodai/cavalry-toolbar?label=release)](https://github.com/luoboruodai/cavalry-toolbar/releases/tag/v0.2.0)
+
+</div>
+
+## Release status
+
+| Product | Status | Platforms |
+| --- | --- | --- |
+| Cavalry Toolbar | `v0.2.0` · released | macOS 12+ universal · Windows 10/11 x64 |
+
 ## What it does
 
 - **Twelve stable slots and multiple profiles:** bind ordinary `.js` / `.jsc` scripts or UI panels without changing their slot numbers.
@@ -16,11 +33,13 @@ A native radial script launcher and profile editor for **Cavalry 2.8**. Keep twe
 
 | Package | Platform | Contents |
 | --- | --- | --- |
-| `CavalryToolbar-v0.2.0-macOS-universal.zip` | macOS 12+, Apple Silicon and Intel | Both editor scripts, universal AppKit helper, validation fixtures, bilingual offline guides |
-| `CavalryToolbar-v0.2.0-Windows-x64.zip` | Windows 10/11 x64 | Both editor scripts, PowerShell/WinForms helper, validation fixtures, bilingual offline guides |
-| `SHA256SUMS.txt` | All | SHA-256 for the two installation archives |
+| [CavalryToolbar-v0.2.0-macOS-universal.zip](https://github.com/luoboruodai/cavalry-toolbar/releases/download/v0.2.0/CavalryToolbar-v0.2.0-macOS-universal.zip) | macOS 12+, Apple Silicon and Intel | Both editor scripts, universal AppKit helper, validation fixtures, bilingual offline guides |
+| [CavalryToolbar-v0.2.0-Windows-x64.zip](https://github.com/luoboruodai/cavalry-toolbar/releases/download/v0.2.0/CavalryToolbar-v0.2.0-Windows-x64.zip) | Windows 10/11 x64 | Both editor scripts, PowerShell/WinForms helper, validation fixtures, bilingual offline guides |
+| [SHA256SUMS.txt](https://github.com/luoboruodai/cavalry-toolbar/releases/download/v0.2.0/SHA256SUMS.txt) | All | SHA-256 for the two installation archives |
 
 **Use the installation archives, not GitHub's automatic “Source code” ZIP, for a ready-to-install package.**
+
+[Release notes](https://github.com/luoboruodai/cavalry-toolbar/releases/tag/v0.2.0) · [Installation guide](docs/INSTALL.md) · [中文安装指南](docs/INSTALL.zh-CN.md)
 
 ## Platform notes
 

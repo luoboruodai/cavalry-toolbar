@@ -4,6 +4,23 @@
 
 [English README](README.md) · [下载 v0.2.0](https://github.com/luoboruodai/cavalry-toolbar/releases/tag/v0.2.0) · [安装指南](docs/INSTALL.zh-CN.md) · [CI](https://github.com/luoboruodai/cavalry-toolbar/actions/workflows/ci-release.yml)
 
+**v0.2.0** · Cavalry 2.8 · macOS 12+ 通用版 · Windows 10/11 x64
+
+<div align="center">
+
+<img src="docs/assets/cavalry-toolbar-banner.svg" alt="Cavalry Toolbar 原生脚本轮盘启动器" width="960">
+
+[![CI](https://github.com/luoboruodai/cavalry-toolbar/actions/workflows/ci-release.yml/badge.svg?branch=main)](https://github.com/luoboruodai/cavalry-toolbar/actions/workflows/ci-release.yml)
+[![Release](https://img.shields.io/github/v/release/luoboruodai/cavalry-toolbar?label=release)](https://github.com/luoboruodai/cavalry-toolbar/releases/tag/v0.2.0)
+
+</div>
+
+## 发布状态
+
+| 产品 | 状态 | 平台 |
+| --- | --- | --- |
+| Cavalry Toolbar | `v0.2.0` · 已发布 | macOS 12+ 通用版 · Windows 10/11 x64 |
+
 ## 功能
 
 - **12 个稳定槽位与多配置**：绑定普通 `.js` / `.jsc` 脚本或 UI 面板，切换配置不改变槽号。
@@ -16,11 +33,13 @@
 
 | 安装包 | 平台 | 内容 |
 | --- | --- | --- |
-| `CavalryToolbar-v0.2.0-macOS-universal.zip` | macOS 12+，Apple Silicon 与 Intel | 两个编辑器脚本、通用 AppKit 助手、验收夹具、双语离线指南 |
-| `CavalryToolbar-v0.2.0-Windows-x64.zip` | Windows 10/11 x64 | 两个编辑器脚本、PowerShell/WinForms 助手、验收夹具、双语离线指南 |
-| `SHA256SUMS.txt` | 全部 | 两个安装包的 SHA-256 校验值 |
+| [CavalryToolbar-v0.2.0-macOS-universal.zip](https://github.com/luoboruodai/cavalry-toolbar/releases/download/v0.2.0/CavalryToolbar-v0.2.0-macOS-universal.zip) | macOS 12+，Apple Silicon 与 Intel | 两个编辑器脚本、通用 AppKit 助手、验收夹具、双语离线指南 |
+| [CavalryToolbar-v0.2.0-Windows-x64.zip](https://github.com/luoboruodai/cavalry-toolbar/releases/download/v0.2.0/CavalryToolbar-v0.2.0-Windows-x64.zip) | Windows 10/11 x64 | 两个编辑器脚本、PowerShell/WinForms 助手、验收夹具、双语离线指南 |
+| [SHA256SUMS.txt](https://github.com/luoboruodai/cavalry-toolbar/releases/download/v0.2.0/SHA256SUMS.txt) | 全部 | 两个安装包的 SHA-256 校验值 |
 
 **安装请使用上述附件，不要把 GitHub 自动生成的 “Source code” ZIP 当作安装包。**
+
+[发布说明](https://github.com/luoboruodai/cavalry-toolbar/releases/tag/v0.2.0) · [安装指南](docs/INSTALL.zh-CN.md) · [English installation](docs/INSTALL.md)
 
 ## 平台说明
 

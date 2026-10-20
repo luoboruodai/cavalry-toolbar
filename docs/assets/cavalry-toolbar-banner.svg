@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="300" viewBox="0 0 1200 300" role="img" aria-labelledby="title desc">
+  <title id="title">Cavalry Toolbar — native radial script launcher</title>
+  <desc id="desc">A dark grid banner with the Cavalry Toolbar wordmark and a twelve-slot radial script wheel in Cavalry green.</desc>
+  <defs>
+    <linearGradient id="accent" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#2fcd71"/>
+      <stop offset="1" stop-color="#078430"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0" x2="1">
+      <stop offset="0" stop-color="#2fcd71" stop-opacity=".16"/>
+      <stop offset="1" stop-color="#078430" stop-opacity=".02"/>
+    </linearGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M32 0H0V32" fill="none" stroke="#d9e7ff" stroke-opacity=".055"/>
+    </pattern>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="300" rx="24" fill="#131a24"/>
+  <rect x="1" y="1" width="1198" height="298" rx="23" fill="url(#grid)" stroke="#2a394b"/>
+  <rect x="1" y="1" width="720" height="298" rx="23" fill="url(#glow)"/>
+  <circle cx="970" cy="132" r="112" fill="#2fcd71" fill-opacity=".08" filter="url(#soft)"/>
+  <rect x="58" y="52" width="8" height="196" rx="4" fill="url(#accent)"/>
+  <text x="96" y="126" fill="#f4f8ff" font-family="SFMono-Regular,Menlo,Consolas,monospace" font-size="43" font-weight="700" letter-spacing="3">CAVALRY TOOLBAR</text>
+  <text x="100" y="164" fill="#aabbd2" font-family="SFMono-Regular,Menlo,Consolas,monospace" font-size="15" letter-spacing="1.5">NATIVE CAVALRY SCRIPT LAUNCHER</text>
+  <text x="100" y="214" fill="#2fcd71" font-family="SFMono-Regular,Menlo,Consolas,monospace" font-size="13">12 SLOTS  /  PROFILES  /  LOCAL EXECUTION</text>
+  <g font-family="SFMono-Regular,Menlo,Consolas,monospace">
+    <text x="970" y="35" fill="#aabbd2" font-size="10" letter-spacing="2" text-anchor="middle">QUICKBAR</text>
+    <circle cx="970" cy="139" r="101" fill="none" stroke="#2a394b" stroke-width="1"/>
+    <path d="M972.33,50.03 A89,89 0 0 1 1012.47,60.79 L988.13,105.60 A38,38 0 0 0 970.99,101.01 Z" fill="#183022" stroke="#76e8c0" stroke-opacity=".62" stroke-width="1.2"/>
+    <text x="986.31" y="81.15" fill="#f4f8ff" font-size="10" text-anchor="middle">01</text>
+    <path d="M1016.50,63.12 A89,89 0 0 1 1045.88,92.50 L1002.40,119.15 A38,38 0 0 0 989.85,106.60 Z" fill="#183022" stroke="#76e8c0" stroke-opacity=".62" stroke-width="1.2"/>
+    <text x="1014.55" y="97.45" fill="#f4f8ff" font-size="10" text-anchor="middle">02</text>
+    <path d="M1048.21,96.53 A89,89 0 0 1 1058.97,136.67 L1007.99,138.01 A38,38 0 0 0 1003.40,120.87 Z" fill="#1e3035" stroke="#76e8c0" stroke-opacity=".62" stroke-width="1.2"/>
+    <text x="1030.85" y="125.69" fill="#f4f8ff" font-size="10" text-anchor="middle">03</text>
+    <path d="M1058.97,141.33 A89,89 0 0 1 1048.21,181.47 L1003.40,157.13 A38,38 0 0 0 1007.99,139.99 Z" fill="#183022" stroke="#76e8c0" stroke-opacity=".62" stroke-width="1.2"/>
+    <text x="1030.85" y="158.31" fill="#f4f8ff" font-size="10" text-anchor="middle">04</text>
+    <path d="M1045.88,185.50 A89,89 0 0 1 1016.50,214.88 L989.85,171.40 A38,38 0 0 0 1002.40,158.85 Z" fill="#1e3035" stroke="#76e8c0" stroke-opacity=".62" stroke-width="1.2"/>
+    <text x="1014.55" y="186.55" fill="#f4f8ff" font-size="10" text-anchor="middle">05</text>
+    <path d="M1012.47,217.21 A89,89 0 0 1 972.33,227.97 L970.99,176.99 A38,38 0 0 0 988.13,172.40 Z" fill="#183022" stroke="#76e8c0" stroke-opacity=".62" stroke-width="1.2"/>
+    <text x="986.31" y="202.85" fill="#f4f8ff" font-size="10" text-anchor="middle">06</text>
+    <path d="M967.67,227.97 A89,89 0 0 1 927.53,217.21 L951.87,172.40 A38,38 0 0 0 969.01,176.99 Z" fill="#1e3035" stroke="#76e8c0" stroke-opacity=".62" stroke-width="1.2"/>
+    <text x="953.69" y="202.85" fill="#f4f8ff" font-size="10" text-anchor="middle">07</text>
+    <path d="M923.50,214.88 A89,89 0 0 1 894.12,185.50 L937.60,158.85 A38,38 0 0 0 950.15,171.40 Z" fill="#183022" stroke="#76e8c0" stroke-opacity=".62" stroke-width="1.2"/>
+    <text x="925.45" y="186.55" fill="#f4f8ff" font-size="10" text-anchor="middle">08</text>
+    <path d="M891.79,181.47 A89,89 0 0 1 881.03,141.33 L932.01,139.99 A38,38 0 0 0 936.60,157.13 Z" fill="#1e3035" stroke="#76e8c0" stroke-opacity=".62" stroke-width="1.2"/>
+    <text x="909.15" y="158.31" fill="#f4f8ff" font-size="10" text-anchor="middle">09</text>
+    <path d="M881.03,136.67 A89,89 0 0 1 891.79,96.53 L936.60,120.87 A38,38 0 0 0 932.01,138.01 Z" fill="#183022" stroke="#76e8c0" stroke-opacity=".62" stroke-width="1.2"/>
+    <text x="909.15" y="125.69" fill="#f4f8ff" font-size="10" text-anchor="middle">10</text>
+    <path d="M894.12,92.50 A89,89 0 0 1 923.50,63.12 L950.15,106.60 A38,38 0 0 0 937.60,119.15 Z" fill="#1e3035" stroke="#76e8c0" stroke-opacity=".62" stroke-width="1.2"/>
+    <text x="925.45" y="97.45" fill="#f4f8ff" font-size="10" text-anchor="middle">11</text>
+    <path d="M927.53,60.79 A89,89 0 0 1 967.67,50.03 L969.01,101.01 A38,38 0 0 0 951.87,105.60 Z" fill="#183022" stroke="#76e8c0" stroke-opacity=".62" stroke-width="1.2"/>
+    <text x="953.69" y="81.15" fill="#f4f8ff" font-size="10" text-anchor="middle">12</text>
+    <circle cx="970" cy="139" r="31" fill="#131a24" stroke="#76e8c0" stroke-width="1.5"/>
+    <text x="970" y="143" fill="#f4f8ff" font-size="21" font-weight="700" text-anchor="middle">12</text>
+    <text x="970" y="157" fill="#2fcd71" font-size="8" letter-spacing="1" text-anchor="middle">SLOTS</text>
+  </g>
+  <text x="835" y="263" fill="#aabbd2" font-family="SFMono-Regular,Menlo,Consolas,monospace" font-size="11" letter-spacing="1">MACOS  /  WINDOWS  /  V0.2.0</text>
+</svg>
