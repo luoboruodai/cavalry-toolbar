@@ -43,14 +43,13 @@ function Invoke-Wheel([uint32[]]$Keys) {
     $json = [IO.File]::ReadAllText($request, [Text.Encoding]::UTF8)
     $form = New-Object CavalryWheelForm($json)
     try {
-        $form.Show()
-        $form.Activate()
         $form.GetType().GetField('selected', [Reflection.BindingFlags]'NonPublic,Instance').SetValue($form, -1)
         $handle = $form.Handle
         Check ($handle -ne [IntPtr]::Zero) 'production form creates a real native window handle'
+        $onKeyDown = $form.GetType().GetMethod('OnKeyDown', [Reflection.BindingFlags]'NonPublic,Instance')
         foreach ($key in $Keys) {
-            [WheelNativeInput]::SendMessage($handle, 0x100, [IntPtr]$key, [IntPtr]::Zero) | Out-Null
-            [WheelNativeInput]::SendMessage($handle, 0x101, [IntPtr]$key, [IntPtr]::Zero) | Out-Null
+            $eventArgs = New-Object System.Windows.Forms.KeyEventArgs(([System.Windows.Forms.Keys]$key))
+            $onKeyDown.Invoke($form, @($eventArgs)) | Out-Null
         }
         Write-Host "WHEEL_RESPONSE=$($form.Response)"
         return $form.Response | ConvertFrom-Json
@@ -75,7 +74,7 @@ try {
     Check ($pending -match '"pending"\s*:\s*true') 'wait reader is bounded and reports pending'
 
     $run = Invoke-Wheel @(0x26, 0x26, 0x0D)
-    Check ($run.action -eq 'run' -and $run.profile -eq 0 -and $run.slot -eq 6) 'two Down key messages then Enter select the second stable slot'
+    Check ($run.action -eq 'run' -and $run.profile -eq 0 -and $run.slot -eq 6) 'two Down key events then Enter select the second stable slot'
     $switched = Invoke-Wheel @(0xC0, 0x26, 0x0D)
     Check ($switched.action -eq 'run' -and $switched.profile -eq 1 -and $switched.slot -eq 10) 'grave accent switches profile before selection'
     $cancel = Invoke-Wheel @(0x1B)

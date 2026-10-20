@@ -44,7 +44,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Real WinForms launch and keyboard tests
+      - name: WinForms handle and event-model tests
         shell: powershell
         run: tests/windows/run.ps1
 
