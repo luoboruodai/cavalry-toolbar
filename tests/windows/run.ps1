@@ -42,13 +42,20 @@ function Invoke-Wheel([string]$Keys) {
         if (-not $process.HasExited) { $process.Kill() }
     }
 }
+function Invoke-WaitReader([string]$Path, [int]$Seconds) {
+    $stdout = Join-Path $temp ([Guid]::NewGuid().ToString('N') + '.txt')
+    $args = @('-NoProfile', '-File', "`"$helper`"", '-WaitResponsePath', "`"$Path`"", '-WaitSeconds', $Seconds)
+    $process = Start-Process -FilePath 'powershell.exe' -ArgumentList $args -RedirectStandardOutput $stdout -WindowStyle Hidden -Wait -PassThru
+    Check ($process.ExitCode -eq 0) "wait reader exits successfully"
+    return [IO.File]::ReadAllText($stdout, [Text.Encoding]::UTF8).Trim()
+}
+
 try {
     $waitFile = Join-Path $temp 'wait.json'
     [IO.File]::WriteAllText($waitFile, '{"version":1,"action":"run","slot":6}', (New-Object Text.UTF8Encoding($false)))
-    $waitResult = (& $helper -WaitResponsePath $waitFile -WaitSeconds 1 | Out-String).Trim()
-    Write-Output "WAIT_RESULT_TYPE=$($waitResult.GetType().FullName) VALUE=[$waitResult]"
+    $waitResult = Invoke-WaitReader $waitFile 1
     Check ($waitResult -match '"action"\s*:\s*"run"' -and $waitResult -match '"slot"\s*:\s*6') 'wait reader returns the completed response'
-    $pending = (& $helper -WaitResponsePath (Join-Path $temp 'missing.json') -WaitSeconds 1 | Out-String).Trim()
+    $pending = Invoke-WaitReader (Join-Path $temp 'missing.json') 1
     Check ($pending -match '"pending"\s*:\s*true') 'wait reader is bounded and reports pending'
 
     $run = Invoke-Wheel '{DOWN}{DOWN}{ENTER}'
