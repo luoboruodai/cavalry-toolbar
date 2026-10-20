@@ -49,7 +49,7 @@ function Invoke-Wheel([uint32[]]$Keys) {
         $onKeyDown = $form.GetType().GetMethod('OnKeyDown', [Reflection.BindingFlags]'NonPublic,Instance')
         foreach ($key in $Keys) {
             $eventArgs = New-Object System.Windows.Forms.KeyEventArgs(([System.Windows.Forms.Keys]$key))
-            $onKeyDown.Invoke($form, @($eventArgs)) | Out-Null
+            $onKeyDown.Invoke($form, [object[]]@($eventArgs.PSObject.BaseObject)) | Out-Null
         }
         Write-Host "WHEEL_RESPONSE=$($form.Response)"
         return $form.Response | ConvertFrom-Json
