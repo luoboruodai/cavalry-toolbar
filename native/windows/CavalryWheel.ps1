@@ -293,7 +293,7 @@ struct ArcTextLayout { public float middle,angleStep,metaRadius,maxNameWidth,met
         var g=e.Graphics;g.SmoothingMode=SmoothingMode.AntiAlias;g.TextRenderingHint=System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
         int count=Math.Max(Items.Length,1);float step=360f/count;
         for(int n=0;n<count;n++){
-            float middle=(-90+step*(n+.5))*Math.PI/180,amount=n<hover.Length?hover[n]:0,pressure=n<press.Length?press[n]:0,open=n<closeValues.Length?closeValues[n]:1;
+            float middle=(float)((-90+step*(n+.5))*Math.PI/180),amount=n<hover.Length?hover[n]:0,pressure=n<press.Length?press[n]:0,open=n<closeValues.Length?closeValues[n]:1;
             if(open<=.001f)continue;
             float lift=request.reducedMotion?0:radialMotion*(amount-pressure);
             float x=cx+(float)Math.Cos(middle)*lift,y=cy+(float)Math.Sin(middle)*lift,start=-90+step*n+.6f,sweep=step-1.2f;
