@@ -43,9 +43,10 @@ function Invoke-Wheel([uint32[]]$Keys) {
     $json = [IO.File]::ReadAllText($request, [Text.Encoding]::UTF8)
     $form = New-Object CavalryWheelForm($json)
     try {
-        $form.GetType().GetField('selected', [Reflection.BindingFlags]'NonPublic,Instance').SetValue($form, -1)
         $handle = $form.Handle
         Check ($handle -ne [IntPtr]::Zero) 'production form creates a real native window handle'
+        $form.GetType().GetField('selected', [Reflection.BindingFlags]'NonPublic,Instance').SetValue($form, -1)
+        Write-Host "KEYS=$($Keys -join ',')"
         $onKeyDown = $form.GetType().GetMethod('OnKeyDown', [Reflection.BindingFlags]'NonPublic,Instance')
         foreach ($key in $Keys) {
             $eventArgs = New-Object System.Windows.Forms.KeyEventArgs(([System.Windows.Forms.Keys]$key))
