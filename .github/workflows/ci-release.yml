@@ -45,7 +45,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Real WinForms launch and keyboard tests
-        shell: pwsh
+        shell: powershell
         run: tests/windows/run.ps1
 
   package:

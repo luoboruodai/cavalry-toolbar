@@ -33,7 +33,7 @@
 
 ### Windows
 
-- 使用 PowerShell 与 .NET Framework WinForms，不设置 `ExecutionPolicy Bypass`，不修改系统策略。
+- 使用 **Windows PowerShell 5.1（powershell.exe）** 与 .NET Framework WinForms，不设置 `ExecutionPolicy Bypass`，不修改系统策略；PowerShell 7（pwsh）不是本次验收运行时。
 - 真实 Windows CI 覆盖助手启动、键盘选择、配置切换、取消与有限等待。
 - 尚未覆盖**已登录 Cavalry 宿主内的 Windows 端到端验收**。请先使用包内场景中立夹具验证，再运行生产脚本。
 - Windows 尚未实现普通快捷键的 UI 面板分派；请从配置编辑器打开 UI 面板。

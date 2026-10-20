@@ -33,7 +33,7 @@ A native radial script launcher and profile editor for **Cavalry 2.8**. Keep twe
 
 ### Windows
 
-- PowerShell and .NET Framework WinForms; no `ExecutionPolicy Bypass` and no policy changes.
+- Windows PowerShell 5.1 (`powershell.exe`) and .NET Framework WinForms; no `ExecutionPolicy Bypass` and no policy changes. PowerShell 7 (`pwsh`) is not the validated runtime.
 - Real Windows CI covers native helper launch, keyboard selection, profile switching, cancellation, and bounded response waiting.
 - An end-to-end test inside a logged-in Cavalry installation on Windows is **not yet covered**. Validate with the included scene-neutral fixtures before running production scripts.
 - Plain-shortcut UI-panel dispatch is not implemented on Windows. Open UI panels from the configuration editor instead.

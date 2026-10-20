@@ -2,9 +2,6 @@ $ErrorActionPreference = 'Stop'
 $root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
 $helper = Join-Path $root 'native/windows/CavalryWheel.ps1'
 $winFormsReferences = @('System.Windows.Forms', 'System.Drawing', 'System.Web.Extensions')
-if ($PSVersionTable.PSEdition -eq 'Core') {
-    $winFormsReferences += @('System.Core', 'System.Linq', 'System.ComponentModel.Primitives', 'System.Drawing.Primitives', 'System.Windows.Forms.Primitives', 'System.Drawing.Common', 'mscorlib', 'System.Runtime', 'netstandard', 'System.Threading', 'System.Threading.Thread', 'System.Collections', 'System.Collections.Specialized', 'System.Console')
-}
 $temp = Join-Path ([IO.Path]::GetTempPath()) ('CavalryWheelTests-' + [Guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $temp | Out-Null
 $script:checks = 0
@@ -40,7 +37,6 @@ function Invoke-Wheel([uint32[]]$Keys) {
     $sourceText = [IO.File]::ReadAllText($helper, [Text.Encoding]::UTF8)
     $match = [regex]::Match($sourceText, "-TypeDefinition @'\r?\n(?<code>[\s\S]*?)\r?\n'@")
     Check ($match.Success) 'production WinForms source is extracted without duplication'
-    if ([System.Environment]::Version.Major -ge 10) { $winFormsReferences += 'System.Private.Windows.Core' }
     if (-not ('CavalryWheelForm' -as [type])) {
         Add-Type -ReferencedAssemblies $winFormsReferences -TypeDefinition $match.Groups['code'].Value
     }
