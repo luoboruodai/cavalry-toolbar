@@ -15,8 +15,6 @@ using System.Runtime.InteropServices;
 public static class WheelNativeInput {
     [DllImport("user32.dll", CharSet=CharSet.Auto)]
     public static extern IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
-    [DllImport("user32.dll", CharSet=CharSet.Auto)]
-    public static extern IntPtr FindWindow(string className, string windowName);
 }
 '@
 $requestObject = @{
@@ -35,24 +33,22 @@ $requestObject = @{
 $request = Join-Path $temp 'request.json'
 [IO.File]::WriteAllText($request, ($requestObject | ConvertTo-Json -Depth 8 -Compress), (New-Object Text.UTF8Encoding($false)))
 function Invoke-Wheel([uint32[]]$Keys) {
-    $response = Join-Path $temp ([Guid]::NewGuid().ToString('N') + '.json')
-    $args = @('-NoProfile', '-STA', '-File', "`"$helper`"", '-RequestPath', "`"$request`"", '-ResponsePath', "`"$response`"")
-    $process = Start-Process -FilePath 'powershell.exe' -ArgumentList $args -PassThru
+    $sourceText = [IO.File]::ReadAllText($helper, [Text.Encoding]::UTF8)
+    $match = [regex]::Match($sourceText, "-TypeDefinition @'\r?\n(?<code>[\s\S]*?)\r?\n'@")
+    Check ($match.Success) 'production WinForms source is extracted without duplication'
+    Add-Type -ReferencedAssemblies System.Windows.Forms,System.Drawing,System.Web.Extensions -TypeDefinition $match.Groups['code'].Value
+    $json = [IO.File]::ReadAllText($request, [Text.Encoding]::UTF8)
+    $form = New-Object CavalryWheelForm($json)
     try {
-        Start-Sleep -Milliseconds 900
-        $process.Refresh()
-        $handle = [WheelNativeInput]::FindWindow($null, 'Cavalry Wheel')
-        Check ($handle -ne [IntPtr]::Zero) "wheel exposes a native window handle"
+        $handle = $form.Handle
+        Check ($handle -ne [IntPtr]::Zero) 'production form creates a real native window handle'
         foreach ($key in $Keys) {
             [WheelNativeInput]::SendMessage($handle, 0x100, [IntPtr]$key, [IntPtr]::Zero) | Out-Null
             [WheelNativeInput]::SendMessage($handle, 0x101, [IntPtr]$key, [IntPtr]::Zero) | Out-Null
         }
-        $process | Wait-Process -Timeout 20 -ErrorAction SilentlyContinue
-        Check ($process.HasExited) "wheel did not exit after input: $Keys"
-        Check ([IO.File]::Exists($response)) "wheel wrote no response: $Keys"
-        return [IO.File]::ReadAllText($response, [Text.Encoding]::UTF8) | ConvertFrom-Json
+        return $form.Response | ConvertFrom-Json
     } finally {
-        if (-not $process.HasExited) { $process.Kill() }
+        $form.Dispose()
     }
 }
 function Invoke-WaitReader([string]$Path, [int]$Seconds) {
