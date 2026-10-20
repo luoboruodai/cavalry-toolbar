@@ -161,78 +161,6 @@ public class CavalryWheelForm : Form {
         return Color.FromArgb((int)(from.A+(to.A-from.A)*t),(int)(from.R+(to.R-from.R)*t),(int)(from.G+(to.G-from.G)*t),(int)(from.B+(to.B-from.B)*t));
     }
     static Color Alpha(Color value,float amount){return Color.FromArgb((int)(value.A*Clamp(amount)),value.R,value.G,value.B);}
-public class UIDispatchRequest { public int version; public int hostPID; public string target; }
-public class UIDispatchResult {
-    public string action="ui-dispatch",status="error",message="UI 分派未完成。",target="";
-    public UIDispatchResult() {}
-    public UIDispatchResult(string status,string message,string target){this.status=status;this.message=message;this.target=target;}
-}
-public static class CavalryUIDispatcher {
-    static bool IsCavalry(int pid){
-        try { using(var process=Process.GetProcessById(pid)) return !process.HasExited && string.Equals(process.ProcessName,"Cavalry",StringComparison.OrdinalIgnoreCase); }
-        catch { return false; }
-    }
-    static AutomationElement[] Find(AutomationElement root,string name,ControlType type){
-        if(root==null)return new AutomationElement[0];
-        var matches=root.FindAll(TreeScope.Descendants,new PropertyCondition(AutomationElement.ControlTypeProperty,type));
-        return matches.Cast<AutomationElement>().Where(e=>e.Current.Name==name).ToArray();
-    }
-    static void Invoke(AutomationElement element){
-        object pattern;
-        if(element.TryGetCurrentPattern(InvokePattern.Pattern,out pattern)){((InvokePattern)pattern).Invoke();return;}
-        if(element.TryGetCurrentPattern(ExpandCollapsePattern.Pattern,out pattern)){((ExpandCollapsePattern)pattern).Expand();return;}
-        if(element.TryGetCurrentPattern(SelectionItemPattern.Pattern,out pattern)){((SelectionItemPattern)pattern).Select();return;}
-        throw new Exception("菜单项不支持调用或展开。");
-    }
-    static string[] Components(string target,string root){
-        string file=Path.GetFullPath(target),directory=Path.GetFullPath(root).TrimEnd(Path.DirectorySeparatorChar)+Path.DirectorySeparatorChar;
-        if(!file.StartsWith(directory,StringComparison.OrdinalIgnoreCase))return null;
-        var parts=file.Substring(directory.Length).Split(new[]{'/','\\'},StringSplitOptions.RemoveEmptyEntries);
-        if(parts.Length==0 || parts.Length>24 || parts.Take(parts.Length-1).Any(x=>x.EndsWith("_assets") || x.StartsWith(".")))return null;
-        parts[parts.Length-1]=Path.GetFileNameWithoutExtension(parts[parts.Length-1]);return parts;
-    }
-    public static UIDispatchResult Run(UIDispatchRequest request,string scriptsRoot,string template){
-        string relay=null,relayBytes=null,receipt=null;
-        try {
-            if(request==null || request.version!=1 || request.hostPID<=0 || string.IsNullOrEmpty(request.target) || !Path.IsPathRooted(request.target))return new UIDispatchResult("error","UI 分派请求无效。",request==null?"":request.target);
-            if(!IsCavalry(request.hostPID))return new UIDispatchResult("error","发起调用的 Cavalry 实例已不可用；未选择其他实例代替。",request.target);
-            string ext=Path.GetExtension(request.target).ToLowerInvariant();
-            if(!File.Exists(request.target) || (ext!=".js" && ext!=".jsc"))return new UIDispatchResult("error","所选 UI 脚本已不存在或类型不支持。",request.target);
-            var components=Components(request.target,scriptsRoot);
-            if(components==null){
-                if(ext!=".js")return new UIDispatchResult("unsupported-external-jsc","外部加密 UI 脚本不能通过源码中继执行；请将原 .jsc 及资源安装到 Cavalry Scripts，再重新绑定。",request.target);
-                string id=Guid.NewGuid().ToString("N");relay=Path.Combine(scriptsRoot,"CavalryToolbar_UIDispatch_"+id+".js");receipt=Path.Combine(Path.GetTempPath(),"CavalryWheel-UIReceipt-"+id+".json");
-                string payload=new JavaScriptSerializer().Serialize(new {target=request.target,directory=Path.GetDirectoryName(request.target),receipt=receipt});
-                if(template.Split(new[]{"__CAVALRY_WHEEL_DISPATCH__"},StringSplitOptions.None).Length!=2)throw new Exception("UI 中继模板无效。");
-                relayBytes=template.Replace("__CAVALRY_WHEEL_DISPATCH__",payload);File.WriteAllText(relay,relayBytes,new System.Text.UTF8Encoding(false));
-                components=new[]{Path.GetFileNameWithoutExtension(relay)};
-            }
-            var root=AutomationElement.RootElement.FindFirst(TreeScope.Children,new PropertyCondition(AutomationElement.ProcessIdProperty,request.hostPID));
-            if(root==null)return new UIDispatchResult("error","Cavalry 主窗口不可用。",request.target);
-            var scripts=Find(root,"Scripts",ControlType.MenuItem).Concat(Find(root,"脚本",ControlType.MenuItem)).ToArray();
-            if(scripts.Length!=1)return new UIDispatchResult("error","没有找到唯一的 Scripts 菜单。",request.target);
-            Invoke(scripts[0]);Thread.Sleep(80);
-            foreach(var component in components){
-                var matches=Find(root,component,ControlType.MenuItem);
-                if(matches.Length!=1)return new UIDispatchResult("error","没有找到唯一的脚本菜单项："+component,request.target);
-                Invoke(matches[0]);Thread.Sleep(50);
-            }
-            if(receipt!=null){
-                var deadline=DateTime.UtcNow.AddSeconds(12);
-                while(!File.Exists(receipt) && DateTime.UtcNow<deadline)Thread.Sleep(50);
-                if(!File.Exists(receipt))return new UIDispatchResult("completion-unknown","菜单已调用，但未收到 UI 求值回执；未重试脚本。",request.target);
-                var result=new JavaScriptSerializer().Deserialize<System.Collections.Generic.Dictionary<string,object>>(File.ReadAllText(receipt));
-                if((string)result["status"] != "evaluated")return new UIDispatchResult("script-error","UI 脚本报告错误，可能已经部分运行。",request.target);
-                return new UIDispatchResult("evaluated","外部 UI 源码已在 Cavalry UI 引擎求值；请检查实际面板结果。",request.target);
-            }
-            return new UIDispatchResult("menu-invoked","已调用原 Cavalry 实例的脚本菜单；请检查实际面板结果。",request.target);
-        } catch(Exception error) { return new UIDispatchResult("error",error.Message,request==null?"":request.target); }
-        finally {
-            if(relay!=null && relayBytes!=null && File.Exists(relay) && File.ReadAllText(relay)==relayBytes)File.Delete(relay);
-            if(receipt!=null && File.Exists(receipt))File.Delete(receipt);
-        }
-    }
-}
 struct ArcTextLayout { public float middle,angleStep,metaRadius,maxNameWidth,metaSize,nameSize; public float[] nameRadii; }
     ArcTextLayout ArcLayout(int index,int count) {
         int n=Math.Max(1,count); float step=(float)(Math.PI*2/n),middle=(float)(-Math.PI/2+step*(index+.5));
@@ -328,6 +256,78 @@ struct ArcTextLayout { public float middle,angleStep,metaRadius,maxNameWidth,met
         using(var b=new SolidBrush(Color.FromArgb(21,24,30)))g.FillRectangle(b,75,454,290,42);
         LabelText(g,"滚轮 / 方向键选择 · ` 切换配置",11,FontStyle.Regular,Muted,new RectangleF(75,457,290,18));
         LabelText(g,"打开配置",10,FontStyle.Regular,AccentText,new RectangleF(75,477,290,16));
+    }
+}
+public class UIDispatchRequest { public int version; public int hostPID; public string target; }
+public class UIDispatchResult {
+    public string action="ui-dispatch",status="error",message="UI 分派未完成。",target="";
+    public UIDispatchResult() {}
+    public UIDispatchResult(string status,string message,string target){this.status=status;this.message=message;this.target=target;}
+}
+public static class CavalryUIDispatcher {
+    static bool IsCavalry(int pid){
+        try { using(var process=Process.GetProcessById(pid)) return !process.HasExited && string.Equals(process.ProcessName,"Cavalry",StringComparison.OrdinalIgnoreCase); }
+        catch { return false; }
+    }
+    static AutomationElement[] Find(AutomationElement root,string name,ControlType type){
+        if(root==null)return new AutomationElement[0];
+        var matches=root.FindAll(TreeScope.Descendants,new PropertyCondition(AutomationElement.ControlTypeProperty,type));
+        return matches.Cast<AutomationElement>().Where(e=>e.Current.Name==name).ToArray();
+    }
+    static void Invoke(AutomationElement element){
+        object pattern;
+        if(element.TryGetCurrentPattern(InvokePattern.Pattern,out pattern)){((InvokePattern)pattern).Invoke();return;}
+        if(element.TryGetCurrentPattern(ExpandCollapsePattern.Pattern,out pattern)){((ExpandCollapsePattern)pattern).Expand();return;}
+        if(element.TryGetCurrentPattern(SelectionItemPattern.Pattern,out pattern)){((SelectionItemPattern)pattern).Select();return;}
+        throw new Exception("菜单项不支持调用或展开。");
+    }
+    static string[] Components(string target,string root){
+        string file=Path.GetFullPath(target),directory=Path.GetFullPath(root).TrimEnd(Path.DirectorySeparatorChar)+Path.DirectorySeparatorChar;
+        if(!file.StartsWith(directory,StringComparison.OrdinalIgnoreCase))return null;
+        var parts=file.Substring(directory.Length).Split(new[]{'/','\\'},StringSplitOptions.RemoveEmptyEntries);
+        if(parts.Length==0 || parts.Length>24 || parts.Take(parts.Length-1).Any(x=>x.EndsWith("_assets") || x.StartsWith(".")))return null;
+        parts[parts.Length-1]=Path.GetFileNameWithoutExtension(parts[parts.Length-1]);return parts;
+    }
+    public static UIDispatchResult Run(UIDispatchRequest request,string scriptsRoot,string template){
+        string relay=null,relayBytes=null,receipt=null;
+        try {
+            if(request==null || request.version!=1 || request.hostPID<=0 || string.IsNullOrEmpty(request.target) || !Path.IsPathRooted(request.target))return new UIDispatchResult("error","UI 分派请求无效。",request==null?"":request.target);
+            if(!IsCavalry(request.hostPID))return new UIDispatchResult("error","发起调用的 Cavalry 实例已不可用；未选择其他实例代替。",request.target);
+            string ext=Path.GetExtension(request.target).ToLowerInvariant();
+            if(!File.Exists(request.target) || (ext!=".js" && ext!=".jsc"))return new UIDispatchResult("error","所选 UI 脚本已不存在或类型不支持。",request.target);
+            var components=Components(request.target,scriptsRoot);
+            if(components==null){
+                if(ext!=".js")return new UIDispatchResult("unsupported-external-jsc","外部加密 UI 脚本不能通过源码中继执行；请将原 .jsc 及资源安装到 Cavalry Scripts，再重新绑定。",request.target);
+                string id=Guid.NewGuid().ToString("N");relay=Path.Combine(scriptsRoot,"CavalryToolbar_UIDispatch_"+id+".js");receipt=Path.Combine(Path.GetTempPath(),"CavalryWheel-UIReceipt-"+id+".json");
+                string payload=new JavaScriptSerializer().Serialize(new {target=request.target,directory=Path.GetDirectoryName(request.target),receipt=receipt});
+                if(template.Split(new[]{"__CAVALRY_WHEEL_DISPATCH__"},StringSplitOptions.None).Length!=2)throw new Exception("UI 中继模板无效。");
+                relayBytes=template.Replace("__CAVALRY_WHEEL_DISPATCH__",payload);File.WriteAllText(relay,relayBytes,new System.Text.UTF8Encoding(false));
+                components=new[]{Path.GetFileNameWithoutExtension(relay)};
+            }
+            var root=AutomationElement.RootElement.FindFirst(TreeScope.Children,new PropertyCondition(AutomationElement.ProcessIdProperty,request.hostPID));
+            if(root==null)return new UIDispatchResult("error","Cavalry 主窗口不可用。",request.target);
+            var scripts=Find(root,"Scripts",ControlType.MenuItem).Concat(Find(root,"脚本",ControlType.MenuItem)).ToArray();
+            if(scripts.Length!=1)return new UIDispatchResult("error","没有找到唯一的 Scripts 菜单。",request.target);
+            Invoke(scripts[0]);Thread.Sleep(80);
+            foreach(var component in components){
+                var matches=Find(root,component,ControlType.MenuItem);
+                if(matches.Length!=1)return new UIDispatchResult("error","没有找到唯一的脚本菜单项："+component,request.target);
+                Invoke(matches[0]);Thread.Sleep(50);
+            }
+            if(receipt!=null){
+                var deadline=DateTime.UtcNow.AddSeconds(12);
+                while(!File.Exists(receipt) && DateTime.UtcNow<deadline)Thread.Sleep(50);
+                if(!File.Exists(receipt))return new UIDispatchResult("completion-unknown","菜单已调用，但未收到 UI 求值回执；未重试脚本。",request.target);
+                var result=new JavaScriptSerializer().Deserialize<System.Collections.Generic.Dictionary<string,object>>(File.ReadAllText(receipt));
+                if((string)result["status"] != "evaluated")return new UIDispatchResult("script-error","UI 脚本报告错误，可能已经部分运行。",request.target);
+                return new UIDispatchResult("evaluated","外部 UI 源码已在 Cavalry UI 引擎求值；请检查实际面板结果。",request.target);
+            }
+            return new UIDispatchResult("menu-invoked","已调用原 Cavalry 实例的脚本菜单；请检查实际面板结果。",request.target);
+        } catch(Exception error) { return new UIDispatchResult("error",error.Message,request==null?"":request.target); }
+        finally {
+            if(relay!=null && relayBytes!=null && File.Exists(relay) && File.ReadAllText(relay)==relayBytes)File.Delete(relay);
+            if(receipt!=null && File.Exists(receipt))File.Delete(receipt);
+        }
     }
 }
 '@
