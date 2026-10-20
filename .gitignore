@@ -1,0 +1,9 @@
+.DS_Store
+PROJECT.md
+DESIGN.md
+private/
+dist/
+preview/
+backups/
+node_modules/
+*.log

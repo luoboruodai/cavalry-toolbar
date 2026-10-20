@@ -1,0 +1,97 @@
+name: CI and Release
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check product scripts
+        run: |
+          node --check src/CavalryToolbar.js
+          node --check src/CavalryQuickbarPanel.js
+      - name: Run source tests
+        run: node --test tests
+
+  macos-native:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: AppKit event-model and dispatch tests
+        run: tests/macos/run.sh
+      - name: Build and inspect universal helper
+        run: |
+          native/macos/build.sh
+          file dist/CavalryToolbar_assets/CavalryWheel.app/Contents/MacOS/CavalryWheel
+          codesign --verify --deep --strict dist/CavalryToolbar_assets/CavalryWheel.app
+
+  windows-native:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Real WinForms launch and keyboard tests
+        shell: pwsh
+        run: tests/windows/run.ps1
+
+  package:
+    needs: [source-tests, macos-native, windows-native]
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Build product scripts and universal helper
+        run: |
+          node scripts-build.mjs
+          native/macos/build.sh
+      - name: Build and verify installation archives
+        run: python3 packaging/build_release.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-packages
+          path: dist/release/
+          if-no-files-found: error
+
+  release:
+    needs: package
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-packages
+          path: dist/release
+      - name: Create or update GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -e
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release edit "$TAG" --title "Cavalry Toolbar $TAG" --notes-file packaging/RELEASE-NOTES.md
+            gh release upload "$TAG" dist/release/* --clobber
+          else
+            gh release create "$TAG" dist/release/* --title "Cavalry Toolbar $TAG" --notes-file packaging/RELEASE-NOTES.md --verify-tag
+          fi
