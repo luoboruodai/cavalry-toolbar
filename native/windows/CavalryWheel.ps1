@@ -17,7 +17,7 @@ $ErrorActionPreference = 'Stop'
 try {
     $winFormsReferences = @('System.Windows.Forms', 'System.Drawing', 'System.Web.Extensions')
     if ($PSVersionTable.PSEdition -eq 'Core') {
-        $winFormsReferences += @('System.Core', 'System.Linq', 'System.ComponentModel.Primitives', 'System.Drawing.Primitives', 'System.Windows.Forms.Primitives', 'System.Drawing.Common', 'mscorlib', 'System.Runtime', 'netstandard')
+        $winFormsReferences += @('System.Core', 'System.Linq', 'System.ComponentModel.Primitives', 'System.Drawing.Primitives', 'System.Windows.Forms.Primitives', 'System.Drawing.Common', 'mscorlib', 'System.Runtime', 'netstandard', 'System.Media', 'System.Threading', 'System.Threading.Thread', 'System.Collections', 'System.Collections.Specialized')
     }
     Add-Type -AssemblyName $winFormsReferences
     Add-Type -ReferencedAssemblies $winFormsReferences -TypeDefinition @'
