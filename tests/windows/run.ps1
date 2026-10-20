@@ -80,7 +80,9 @@ function Invoke-Dispatch([int]$HostPID, [string]$Target) {
     $process | Wait-Process -Timeout 20 -ErrorAction SilentlyContinue
     Check ($process.HasExited) 'dispatch exits after invoking the isolated host'
     Check ([IO.File]::Exists($response)) 'dispatch writes a response file'
-    return [IO.File]::ReadAllText($response, [Text.Encoding]::UTF8) | ConvertFrom-Json
+    $result = [IO.File]::ReadAllText($response, [Text.Encoding]::UTF8) | ConvertFrom-Json
+    Write-Host "DISPATCH=$($result.action)/$($result.status): $($result.message)"
+    return $result
 }
 try {
     $waitFile = Join-Path $temp 'wait.json'
