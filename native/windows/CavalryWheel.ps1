@@ -303,7 +303,8 @@ struct ArcTextLayout { public float middle,angleStep,metaRadius,maxNameWidth,met
                 path.AddArc(cx-outer,cy-outer,outer*2,outer*2,start,sweep);
                 path.AddArc(cx-inner,cy-inner,inner*2,inner*2,start+sweep,-sweep);path.CloseFigure();
                 bool available=n<Items.Length && Items[n].available;
-                var rest=Color.FromArgb(38,43,52),hoverFill=available?Accent:Color.FromArgb(24,48,34);
+                var rest=Color.FromArgb(38,43,52);
+                var hoverFill=available?Accent:Color.FromArgb(24,48,34);
                 var fill=Blend(Blend(rest,hoverFill,amount),Color.FromArgb(21,24,30),pressure*.25f);
                 using(var brush=new SolidBrush(Alpha(fill,open)))g.FillPath(brush,path);
                 using(var pen=new Pen(Alpha(Blend(Color.FromArgb(59,66,77),AccentText,amount),open),1))g.DrawPath(pen,path);
