@@ -9,7 +9,14 @@ function Check([bool]$Condition, [string]$Message) {
     $script:checks++
 }
 Add-Type -AssemblyName System.Windows.Forms
-Add-Type -AssemblyName Microsoft.VisualBasic
+Add-Type -TypeDefinition @'
+using System;
+using System.Runtime.InteropServices;
+public static class WheelNativeInput {
+    [DllImport("user32.dll", CharSet=CharSet.Auto)]
+    public static extern IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+}
+'@
 $requestObject = @{
     version = 1; active = 0; reducedMotion = $true; timeoutSeconds = 30
     accent = '#078430'; accentText = '#2fcd71'
@@ -25,15 +32,19 @@ $requestObject = @{
 }
 $request = Join-Path $temp 'request.json'
 [IO.File]::WriteAllText($request, ($requestObject | ConvertTo-Json -Depth 8 -Compress), (New-Object Text.UTF8Encoding($false)))
-function Invoke-Wheel([string]$Keys) {
+function Invoke-Wheel([uint32[]]$Keys) {
     $response = Join-Path $temp ([Guid]::NewGuid().ToString('N') + '.json')
     $args = @('-NoProfile', '-STA', '-File', "`"$helper`"", '-RequestPath', "`"$request`"", '-ResponsePath', "`"$response`"")
     $process = Start-Process -FilePath 'powershell.exe' -ArgumentList $args -PassThru
     try {
         Start-Sleep -Milliseconds 900
-        [Microsoft.VisualBasic.Interaction]::AppActivate($process.Id)
-        Start-Sleep -Milliseconds 250
-        [System.Windows.Forms.SendKeys]::SendWait($Keys)
+        $process.Refresh()
+        $handle = $process.MainWindowHandle
+        Check ($handle -ne [IntPtr]::Zero) "wheel exposes a native window handle"
+        foreach ($key in $Keys) {
+            [WheelNativeInput]::SendMessage($handle, 0x100, [IntPtr]$key, [IntPtr]::Zero) | Out-Null
+            [WheelNativeInput]::SendMessage($handle, 0x101, [IntPtr]$key, [IntPtr]::Zero) | Out-Null
+        }
         $process | Wait-Process -Timeout 20 -ErrorAction SilentlyContinue
         Check ($process.HasExited) "wheel did not exit after input: $Keys"
         Check ([IO.File]::Exists($response)) "wheel wrote no response: $Keys"
@@ -58,12 +69,11 @@ try {
     $pending = Invoke-WaitReader (Join-Path $temp 'missing.json') 1
     Check ($pending -match '"pending"\s*:\s*true') 'wait reader is bounded and reports pending'
 
-    $run = Invoke-Wheel '{DOWN}{DOWN}{ENTER}'
-    Check ($run.action -eq 'run' -and $run.profile -eq 0 -and $run.slot -eq 6) 'two Down keys then Enter select the second stable slot'
-    $profileKeys = '`{DOWN}{ENTER}'
-    $switched = Invoke-Wheel $profileKeys
+    $run = Invoke-Wheel @(0x26, 0x26, 0x0D)
+    Check ($run.action -eq 'run' -and $run.profile -eq 0 -and $run.slot -eq 6) 'two Down key messages then Enter select the second stable slot'
+    $switched = Invoke-Wheel @(0xC0, 0x26, 0x0D)
     Check ($switched.action -eq 'run' -and $switched.profile -eq 1 -and $switched.slot -eq 10) 'grave accent switches profile before selection'
-    $cancel = Invoke-Wheel '{ESC}'
+    $cancel = Invoke-Wheel @(0x1B)
     Check ($cancel.action -eq 'cancel') 'Escape cancels without running a slot'
     Write-Output "PASS: $script:checks native Windows WinForms assertions on $env:COMPUTERNAME"
 } finally {
