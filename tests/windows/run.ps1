@@ -43,12 +43,15 @@ function Invoke-Wheel([uint32[]]$Keys) {
     $json = [IO.File]::ReadAllText($request, [Text.Encoding]::UTF8)
     $form = New-Object CavalryWheelForm($json)
     try {
+        $form.Show()
+        $form.Activate()
         $handle = $form.Handle
         Check ($handle -ne [IntPtr]::Zero) 'production form creates a real native window handle'
         foreach ($key in $Keys) {
             [WheelNativeInput]::SendMessage($handle, 0x100, [IntPtr]$key, [IntPtr]::Zero) | Out-Null
             [WheelNativeInput]::SendMessage($handle, 0x101, [IntPtr]$key, [IntPtr]::Zero) | Out-Null
         }
+        Write-Output "WHEEL_RESPONSE=$($form.Response)"
         return $form.Response | ConvertFrom-Json
     } finally {
         $form.Dispose()
